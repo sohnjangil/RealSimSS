@@ -1,6 +1,6 @@
 ## *RealSimSS* - Simulation tool of small and structural variations
 
-**License:** [GNU GPLv3][license] 
+**License:** GNU GPLv3 
 
 Installation
 ------------
