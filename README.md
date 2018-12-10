@@ -28,7 +28,7 @@ Usage
 ```
 RealSimSS  example.conf  outfile_prefix
 ```
-
+example.conf file can be found in src directory.
 
 Contact
 -------
