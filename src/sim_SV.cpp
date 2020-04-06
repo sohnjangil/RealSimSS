@@ -453,7 +453,7 @@ VCF_MAP GENOME::sim_tra( SVTYPE & tra, std::mt19937 & generator){
 	  vcf.chrom=selected_id;
 	  vcf.pos=tra_position_2;
 	  vcf.id="TRA_"+std::to_string(tra_count);
-	  vcf.ref=sequence[i.first][tra_position_2-1];
+	  vcf.ref=sequence[selected_id][tra_position_2-1];
 	  vcf.alt=vcf.ref;
 	  vcf.alt+=seq;
 	  vcf.qual=".";
