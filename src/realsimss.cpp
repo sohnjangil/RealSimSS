@@ -597,15 +597,8 @@ inline std::size_t end_pos( VCF vcf){
 
 
 bool GENOME::somatic_check(){
-  bool output = 1 ;
-  output *= somatic_ins.number;
-  output *= somatic_del.number;
-  output *= somatic_dup.number;
-  output *= somatic_inv.number;
-  output *= somatic_tra.number;
-  return output;
+  return somatic_ins.number + somatic_del.number + somatic_dup.number + somatic_inv.number + somatic_tra.number;
 }
-
 
 
 
