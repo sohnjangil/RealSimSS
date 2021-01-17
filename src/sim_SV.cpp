@@ -415,13 +415,12 @@ VCF_MAP GENOME::sim_tra( SVTYPE & tra, std::mt19937 & generator){
 	
 	pick = whole_genome_dist(generator);
 	for ( auto & j : sequence_size_sum ){
+	  selected_id = j.first;
 	  if ( pick < j.second ){
-	    selected_id = j.first;
-	  }
-	  else{
 	    break;
 	  }
 	}
+
 	size = genome_info[selected_id];
 	std::uniform_int_distribution<std::size_t> position_2(1,size);
 	tra_position_2=position_2(generator);
