@@ -443,6 +443,10 @@ VCF_MAP GENOME::sim_tra( SVTYPE & tra, std::mt19937 & generator){
 	  vcf.info="SVTYPE=TRA;SVMETHOD=RealSimSS;CHR2=";
 	  vcf.info+=selected_id+";END="+std::to_string(tra_position_2) +";SVLEN=" + std::to_string(tra_length);
 	  
+	  if (strand){
+	    vcf.info+=";FLIPPED";
+	  }
+
 	  tra_map[vcf.chrom][vcf.pos]=vcf;
 
 	  if (strand){
@@ -459,6 +463,10 @@ VCF_MAP GENOME::sim_tra( SVTYPE & tra, std::mt19937 & generator){
 	  vcf.filter=".";
 	  vcf.info="SVTYPE=TRA;SVMETHOD=RealSimSS;CHR2=";
 	  vcf.info+=i.first+";END="+std::to_string(tra_position_1) +";SVLEN=" + std::to_string(tra_length);
+
+	  if (strand){
+	    vcf.info+=";FLIPPED";
+	  }
 
 	  tra_map[vcf.chrom][vcf.pos]=vcf;
 	   

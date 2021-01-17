@@ -37,12 +37,24 @@ int main ( int argc , char ** argv ){
   std::cout << "[Program start]\n" << currentDateTime() << std::endl;
 
 
-  unsigned seed = 0;
+  unsigned seed1 = 0;
+  unsigned seed2 = 0;
   std::string key;
   std::ifstream fin ( argv[1] );
   while ( fin >> key ){
     if ( key == "seed" ){
-      fin >> seed;
+      fin >> key;
+      std::cout << key << "\n";
+      if ( key == "germline" ){
+	fin >> seed1;
+      }
+      else if ( key == "somatic" ){
+	fin >> seed2;
+      }
+      else {
+	std::cout << "ERROR!!! Seed must be germline or somatic in configure file: " << argv[1] << "\n";
+	return 1;
+      }
       break;
     }
   }
@@ -54,9 +66,21 @@ int main ( int argc , char ** argv ){
   bool somatic_check=1;
   
 
-  if ( seed == 0 ) seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::cout << "(SEED number for random number)=" << seed << std::endl;
-  std::mt19937 generator (seed);
+  if ( seed1 == 0 && seed2 == 0 ){
+    seed1 = std::chrono::system_clock::now().time_since_epoch().count();
+    seed2 = seed1 + 1;
+  }
+  else if ( seed1 == 0 ){
+    seed1 = std::chrono::system_clock::now().time_since_epoch().count();
+  }
+  else if ( seed2 == 0 ){
+    seed2 = std::chrono::system_clock::now().time_since_epoch().count();
+  }
+  std::cout << "(SEED1 number for random number)=" << seed1 << std::endl;
+  std::cout << "(SEED2 number for random number)=" << seed2 << std::endl;
+
+
+  std::mt19937 generator1 (seed1);
 
 
   std::cout << std::endl
@@ -69,29 +93,43 @@ int main ( int argc , char ** argv ){
   std::cout << std::endl 
 	    << "[Reading dbSNP vcf and selecting variations]" << std::endl;
   VCF_CLASS dbSNP_vcf(conf_file);
-  dbSNP_vcf.select_randomly(germline.SNP_number,generator);
+  dbSNP_vcf.select_randomly(germline.SNP_number,generator1);
   outfile = pref + ".selected_dbSNP.vcf";
   dbSNP_vcf.write(outfile);
   std::cout << currentDateTime() << std::endl << "[Done]" << std::endl;
 
 
+  ///////////////////////////////////////////////////////////////////////////////////////////
+  //
+  // Germline simulation
+  //
+
   std::cout << std::endl
 	    << "[Simulation of SV]" << std::endl;
   VCF_CLASS germline_SV(conf_file); // germline SV
-  VCF_CLASS somatic_SV(conf_file); // somatic SV
 
   std::cout << "Germline:\n" ;
-  germline_SV.vcf_map = germline.germline_sim_SV(generator);
+  germline_SV.vcf_map = germline.germline_sim_SV(generator1);
   outfile = pref + ".germline_SV.vcf";
   std::cout << "vcf file of germline SV: " << outfile << std::endl;
   germline_SV.write(outfile);
+
+
+  ///////////////////////////////////////////////////////////////////////////////////////////
+  //
+  // Somtic simulation
+  //
+
+  std::mt19937 generator2 (seed2);
+
+  VCF_CLASS somatic_SV(conf_file); // somatic SV
 
   somatic_check = germline.somatic_check();
   if ( somatic_check ){
     // copy germline genome to somatic genome
     std::cout << "Somatic:\n" ;
     somatic=germline;
-    somatic_SV.vcf_map  = somatic.somatic_sim_SV(generator);
+    somatic_SV.vcf_map  = somatic.somatic_sim_SV(generator2);
     outfile = pref + ".somatic_SV.vcf";
     std::cout << "vcf file of somatic SV: " << outfile << std::endl;
     somatic_SV.write(outfile);
@@ -133,10 +171,12 @@ int main ( int argc , char ** argv ){
   std::cout << std::endl
 	    << "[Modifying genome]" << std::endl;
   std::cout << "Germline: germline_SV + dbSNP" << std::endl;
-  germline.modify_genome(germline_vcf.vcf_map , generator );
+  // germline.modify_genome(germline_vcf.vcf_map , generator1 );
+  germline.modify_genome(germline_vcf.vcf_map );
   if ( somatic_check ){
     std::cout << "Somatic: germline_SV + somatic_SV + dbSNP" << std::endl;
-      somatic.modify_genome(somatic_vcf.vcf_map , generator );
+      // somatic.modify_genome(somatic_vcf.vcf_map , generator2 );
+      somatic.modify_genome(somatic_vcf.vcf_map );
   }
   std::cout << currentDateTime() << std::endl << "[Done]" << std::endl;
 

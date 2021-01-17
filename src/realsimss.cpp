@@ -418,7 +418,8 @@ T GENOME::read_conf(std::string conf, std::string key){
 }
 
 
-void GENOME::modify_genome( VCF_MAP & vcf_map, std::mt19937 & generator){
+//void GENOME::modify_genome( VCF_MAP & vcf_map, std::mt19937 & generator){
+void GENOME::modify_genome( VCF_MAP & vcf_map){
 
   // VCF_MAP output_vcf_map ;
 

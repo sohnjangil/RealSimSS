@@ -193,7 +193,8 @@ public:
   VCF_MAP germline_sim_SV( std::mt19937 & );
   VCF_MAP somatic_sim_SV( std::mt19937 & );
   VCF_MAP add_dbSNP( VCF_MAP & );
-  void modify_genome( VCF_MAP &, std::mt19937 & );
+  // void modify_genome( VCF_MAP &, std::mt19937 & );
+  void modify_genome( VCF_MAP & );
   void write(std::string); 
   
   bool somatic_check();
